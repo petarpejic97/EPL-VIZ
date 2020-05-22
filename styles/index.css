@@ -1,34 +1,41 @@
-.tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-  }
-  
-  /* Style the buttons that are used to open the tab content */
-  .tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-  }
-  
-  /* Change background color of buttons on hover */
-  .tab button:hover {
-    background-color: #ddd;
-  }
-  
-  /* Create an active/current tablink class */
-  .tab button.active {
-    background-color: #ccc;
-  }
-  
-  /* Style the tab content */
-  .tabcontent {
-    display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-  }
+
+body, html {
+  height: 100%;
+}
+.jumbotron{
+  margin:0;
+  border-radius: 0;
+  background-color: #bd007e;
+}
+h1{
+  color:white;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  word-break: break-word;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid #9e9d9d;
+  text-align: left;
+  padding: 6px 2px;
+}
+
+ tr > td:nth-child(2){
+  cursor: pointer;
+}
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.clubInformation{
+  border-radius: 5px;
+  margin: auto!important;
+  height: 500px;
+  border: 3px solid rgb(4, 57, 87);;
+}
