@@ -1,4 +1,6 @@
-
+var svg, xAxis, yAxis,height;
+var barchart, x, y, barWidth;
+var choosenClub;
 var data = [
     {
        "Team":"Manchester City",
@@ -599,7 +601,7 @@ var data = [
        "attack_pass_accuracy":72.9
     },
     {
-       "Team":" Bournemouth",
+       "Team":"Bournemouth",
        "category":"No UEFA Competitions",
        "general_league_position":14,
        "finance _live_games_televised":10,
@@ -921,12 +923,204 @@ var data = [
        "attack_pass_accuracy":75.8
     }]
 $( document ).ready(function() {
+   createSVG()
    $(".table td:nth-child(2)").click(function() {
       console.log("udem")
       var tableData = $(this).parent("tr").children("td").map(function() {
           return $(this).text();
+          
       }).get();
-  
-      console.log(tableData);
-  });
+      
+      setHeader(tableData)
+      setImage(tableData[1])
+      createGraph(tableData)
+
+   });
 });
+function setHeader(tableData){
+   var oldname = document.querySelector("#clubname")
+   var clubName = document.createElement("h2")
+   clubName.textContent= tableData[1]
+   clubName.style.lineHeight = "150px";
+   clubName.style.position = "absolute"
+   clubName.style.marginLeft = "10%"
+   clubName.setAttribute("float","left")
+   clubName.setAttribute("id","clubname")
+   $("#clubname").replaceWith(clubName)
+
+   
+}
+function setImage(image){
+   var img = document.querySelector("#clubImage")
+   img.setAttribute("height", "auto");
+   img.style.float="right"
+   img.style.display="block"
+   img.style.margin="15px 15px 0 0"
+   switch(image){
+      
+      case "Manchester City":{
+         console.log("udem u city")
+         img.setAttribute("src","./images/mnc.png")
+         break;
+      }
+      case "Liverpool":{
+         console.log("udem u liverpool")
+         img.setAttribute("src","./images/liverpool.png")
+         break;
+      }
+      case "Chelsea":{
+         img.setAttribute("src","./images/chelsea.png")
+         break;
+      }
+      case "Tottenham":{
+         console.log("udem u city")
+         img.setAttribute("src","./images/tottenham.png")
+         break;
+      }
+      case "Arsenal":{
+         console.log("udem u liverpool")
+         img.setAttribute("src","./images/arsenal.png")
+         break;
+      }
+      case "Manchester United":{
+         img.setAttribute("src","./images/mnu.png")
+         break;
+      }
+      case "Wolverhampton":{
+         img.setAttribute("src","./images/wolwes.png")
+         break;
+      }
+      case "Everton":{
+         img.setAttribute("src","./images/everton.png")
+         break;
+      }
+      case "Leicester":{
+         img.setAttribute("src","./images/leicester.png")
+         break;
+      }
+      case "West Ham":{
+         img.setAttribute("src","./images/westham.png")
+         break;
+      }
+      case "Watford":{
+         img.setAttribute("src","./images/watford.png")
+         break;
+      }
+      case "Crystal Palace":{
+         img.setAttribute("src","./images/crystal.png")
+         break;
+      }
+      case "Newcastle":{
+         img.setAttribute("src","./images/newcastle.png")
+         break;
+      }
+      case "Bournemouth":{
+         img.setAttribute("src","./images/bour.png")
+         break;
+      }
+      case "Burnley":{
+         img.setAttribute("src","./images/burley.png")
+         break;
+      }
+      case "Southampton":{
+         img.setAttribute("src","./images/southampton.png")
+         break;
+      }
+      case "Brighton":{
+         img.setAttribute("src","./images/brighton.png")
+         break;
+      }
+      case "Cardiff":{
+         img.setAttribute("src","./images/cardiff.png")
+         break;
+      }
+      case "Fulham":{
+         img.setAttribute("src","./images/fulham.png")
+         break;
+      }
+      case "Huddersfield":{
+         img.setAttribute("src","./images/hudd.png")
+         break;
+      }
+   }
+   
+}
+function createSVG(){
+
+   height = 500
+   xtransfomr =450 
+   width = 700
+   barWidth = width / data.length
+   margin = { left: 50, top: 10, right: 50, bottom: 30 }
+   
+   const getRatio = side => (margin[side] / width) * 100 + '%'
+
+   x = d3.scale.ordinal()
+      .domain(d3.range(data.length))
+      .rangeRoundBands([0, width], 0.1, 0.1)
+    
+   y = d3.scale.linear()
+      .domain([0,100])
+      .range([height, 0])
+    
+   yAxis = d3.svg.axis()
+      .scale(y)
+      .orient('left')
+
+   xAxis = d3.svg.axis()
+      .scale(x)
+      .orient('bottom')
+      .tickFormat(function(d, i) { return data[i]['Team']; });
+
+   svg = d3.select(".clubInformation")
+      .append("svg")
+      .attr('preserveAspectRatio', 'xMinYMin meet')
+      .attr('viewBox','0 0 ' + (width + margin.left + margin.right) +' ' +(height + margin.top + margin.bottom))
+      .style("overflow","visible")
+      .style("margin-left","12%")
+}
+
+function createGraph(tableData){
+   svg.selectAll("*").remove();
+
+      var bar = svg.selectAll('g')
+         .data(data)
+         .enter()
+         .append('g')
+         .attr('transform', (_, i) => 'translate(' + i * barWidth + ', 0)')
+
+   svg.append('g')
+      .data(data)
+      .attr('class', 'x axis')
+      .call(xAxis)
+      .attr('transform', 'translate(0,' + (height-100) + ')')
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .style("transform", "rotate(-65)");
+
+   svg.append('g')
+         .attr('class', 'y axis')
+         .call(yAxis)
+         .append("text")
+         .attr("dx", "-16em")
+         .attr("dy", "-3em")
+         .style("text-anchor", "center")
+         .style("font-size","larger")
+         .style("transform","rotate(270deg)")
+         .text("Posijed lopte u sezoni 2018/2019");
+
+   bar.append('rect')
+      .attr('class', 'bar')
+      .attr('width', barWidth - 10)
+      .attr('y', function(d) { return y(d.attack_posession); })
+      .attr('height',function(d,i) {return height - y(d.attack_posession); })
+      .attr("fill",  function(d,i) {
+         if(tableData[1] == d.Team){
+            return "rgb(89, 206, 128)" 
+         }
+         else
+            return "#bd007e"
+         })
+
+}
