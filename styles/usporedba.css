@@ -1,0 +1,17 @@
+body, html {
+    height: 100%;
+  }
+  .jumbotron{
+    margin:0;
+    border-radius: 0;
+    background-color: #bd007e;
+  }
+  h1{
+    color:white;
+    text-align: center;
+  }
+body {
+    margin: 0;
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica;
+}

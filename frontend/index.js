@@ -938,23 +938,33 @@ $( document ).ready(function() {
    });
 });
 function setHeader(tableData){
-   var oldname = document.querySelector("#clubname")
    var clubName = document.createElement("h2")
    clubName.textContent= tableData[1]
-   clubName.style.lineHeight = "150px";
-   clubName.style.position = "absolute"
-   clubName.style.marginLeft = "10%"
+
    clubName.setAttribute("float","left")
    clubName.setAttribute("id","clubname")
    $("#clubname").replaceWith(clubName)
+   getPercent(clubName.textContent)
+}
 
-   
+function getPercent(clubname){
+   for(var i = 0; i<data.length;i++){
+      if(data[i]["Team"] == clubname){
+         setPercentage(data[i]["attack_posession"])
+      }
+   }
+}
+function setPercentage(possesion){
+   var percentage = document.querySelector("#possesionPercent")
+   percentage.innerHTML="Posijed lopte:<strong> "+possesion+"%<strong>"
+
 }
 function setImage(image){
    var img = document.querySelector("#clubImage")
-   img.setAttribute("height", "auto");
-   img.style.float="right"
-   img.style.display="block"
+   img.setAttribute("height", "150");
+   img.style.right="0"
+   img.style.top="0"
+   img.style.position="absolute"
    img.style.margin="15px 15px 0 0"
    switch(image){
       
@@ -1103,12 +1113,12 @@ function createGraph(tableData){
          .attr('class', 'y axis')
          .call(yAxis)
          .append("text")
-         .attr("dx", "-16em")
+         .attr("dx", "-10em")
          .attr("dy", "-3em")
          .style("text-anchor", "center")
          .style("font-size","larger")
          .style("transform","rotate(270deg)")
-         .text("Posijed lopte u sezoni 2018/2019");
+         .text("Postotak");
 
    bar.append('rect')
       .attr('class', 'bar')
@@ -1122,5 +1132,11 @@ function createGraph(tableData){
          else
             return "#bd007e"
          })
-
+   svg.append("text")
+         .attr("x", (width / 2))             
+         .attr("y", - 100)
+         .attr("text-anchor", "middle")  
+         .style("font-size", "20px") 
+         .style("text-decoration", "underline")  
+         .text("Posijed lopte u sezoni 2018/2019");
 }

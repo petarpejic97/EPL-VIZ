@@ -40,15 +40,17 @@ tr:nth-child(even) {
   margin: auto 0!important;
   border: 3px solid rgb(4, 57, 87);;
 }
-#infoContainer{
+#headerConteiner{
   padding: 0 25px;
   height: 200px;
   width: 100%;
 }
 #clubImage{
   max-width: 150px;
-  width: 100%;
-
+  width: auto;
+}
+#infoContainer{
+  text-align: center!important;
 }
 svg > g.y.axis > path,svg > g.y.axis > g> text{
   transform: translate(0px, -100px);
