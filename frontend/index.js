@@ -1092,7 +1092,6 @@ function createSVG(){
 
 function createGraph(tableData){
    svg.selectAll("*").remove();
-
       var bar = svg.selectAll('g')
          .data(data)
          .enter()
@@ -1123,8 +1122,8 @@ function createGraph(tableData){
    bar.append('rect')
       .attr('class', 'bar')
       .attr('width', barWidth - 10)
-      .attr('y', function(d) { return y(d.attack_posession); })
-      .attr('height',function(d,i) {return height - y(d.attack_posession); })
+      .attr('y', function(d) { return y(0); })
+      .attr('height',function(d,i) {return height - y(0); })
       .attr("fill",  function(d,i) {
          if(tableData[1] == d.Team){
             return "rgb(89, 206, 128)" 
@@ -1132,6 +1131,14 @@ function createGraph(tableData){
          else
             return "#bd007e"
          })
+
+   svg.selectAll("rect")
+      .transition()
+      .duration(800)
+      .attr('y', function(d) { return y(d.attack_posession); })
+      .attr('height',function(d,i) {return height - y(d.attack_posession); })
+      .delay(function(d,i){console.log(i) ; return(i*100)})
+
    svg.append("text")
          .attr("x", (width / 2))             
          .attr("y", - 100)
