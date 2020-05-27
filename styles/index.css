@@ -59,5 +59,8 @@ svg > g > rect{
   transform: translate(0px, -100px);
 }
 svg > g.x.axis > g > text{
-  transform: translate(-25px, 30px) rotate(-45deg);
+  transform: translate(-25px, 45px) rotate(-45deg);
+}
+img{
+  z-index: -1;
 }

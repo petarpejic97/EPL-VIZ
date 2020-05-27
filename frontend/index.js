@@ -923,6 +923,7 @@ var data = [
        "attack_pass_accuracy":75.8
     }]
 $( document ).ready(function() {
+   createTable()
    createSVG()
    $(".table td:nth-child(2)").click(function() {
       console.log("udem")
@@ -937,6 +938,36 @@ $( document ).ready(function() {
 
    });
 });
+
+function createTable(){
+   var tablewrapper = document.querySelector(".table-wrapper"),
+   tbl  = document.createElement('table');
+   tbl.style.width  = '100%';
+   tbl.setAttribute("class","table")
+   tbl.style.border = '1px solid black';
+
+   var headerPolje = ["Pozicija","Klub","Utakmice","Pobjede","Izjednačene","Porazi",
+   "Gol razlika","Zabijeni golovi","Primljeni golovi","Bodovi"]
+   var tr = tbl.insertRow();
+   for(var j = 0; j < 10; j++){
+      
+      var th = tr.insertCell();
+      th.appendChild(document.createTextNode(headerPolje[j]));
+   }
+
+   var poljeStupaca=["general_league_position","Team","general_matches_played","general_won",
+            "general_draw","general_lost","general_goal_difference","attack_scored",
+            "defence_goals_conceeded","general_points"]
+   for(var i = 0; i < data.length; i++){
+      var tr = tbl.insertRow();
+      for(var j = 0; j < 10; j++){
+         var td = tr.insertCell();
+         td.appendChild(document.createTextNode(data[i][poljeStupaca[j]]));
+      }
+   }
+   tablewrapper.appendChild(tbl)
+}
+    
 function setHeader(tableData){
    var clubName = document.createElement("h2")
    clubName.textContent= tableData[1]
@@ -969,12 +1000,10 @@ function setImage(image){
    switch(image){
       
       case "Manchester City":{
-         console.log("udem u city")
          img.setAttribute("src","./images/mnc.png")
          break;
       }
       case "Liverpool":{
-         console.log("udem u liverpool")
          img.setAttribute("src","./images/liverpool.png")
          break;
       }
@@ -983,12 +1012,10 @@ function setImage(image){
          break;
       }
       case "Tottenham":{
-         console.log("udem u city")
          img.setAttribute("src","./images/tottenham.png")
          break;
       }
       case "Arsenal":{
-         console.log("udem u liverpool")
          img.setAttribute("src","./images/arsenal.png")
          break;
       }
@@ -1105,7 +1132,7 @@ function createGraph(tableData){
       .attr('transform', 'translate(0,' + (height-100) + ')')
       .style("text-anchor", "end")
       .attr("dx", "-.8em")
-      .attr("dy", ".15em")
+      .attr("dy", "5.15em")
       .style("transform", "rotate(-65)");
 
    svg.append('g')
