@@ -1,0 +1,26 @@
+
+body, html {
+  height: 100%;
+}
+.jumbotron{
+  margin:0;
+  border-radius: 0;
+  background-color: #bd007e;
+}
+h1{
+  color:white;
+  text-align: center;
+}
+
+#button-wrapper{
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+button{
+    margin: 5px;
+}
+#ukupneFinancije{
+  height: 555px;
+  margin: auto;
+}
