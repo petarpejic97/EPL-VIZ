@@ -64,3 +64,8 @@ svg > g.x.axis > g > text{
 img{
   z-index: -1;
 }
+ g.y.axis > path , g.x.axis > path{
+  stroke: black;
+  fill: none;
+  stroke-width: 1px;
+}

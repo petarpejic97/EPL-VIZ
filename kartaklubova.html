@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.uk { fill: #cad9dc; }
+
+.place,
+.place-label {
+  fill: #444;
+}
+
+h1, p, text {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  pointer-events: none;
+}
+  
+  .dialoguebox {
+    position: absolute;
+    background-color: rgba(255,255,255,0.8);
+    border: solid;
+    border-color:#003C57;
+    opacity:0;
+    text-align:center;
+  }
+
+</style>
+<body>
+  <h1>Guess the halfway of the UK</h1>
+  <p>Click a point on the map where there is an equal amount of land above the line as there is below<p>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-queue.v3.min.js"></script>
+<script src="https://unpkg.com/topojson@3"></script>
+<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+<script>
+
+d3.queue  
+
+d3.queue()
+.defer(d3.json, "uk.geo.json")
+.await(ready);
+  
+function ready (error, uk){
+  
+var width = parseInt(d3.select('body').style("width"));
+    height = width*1.2;
+
+var projection = d3.geoAlbers()
+    .center([0, 55.4])
+    .rotate([4.4, 0])
+    .parallels([50, 60])
+    .scale(width * 6.4)
+    .translate([width / 2, height / 2]);
+
+var path = d3.geoPath()
+    .projection(projection)
+    .pointRadius(2);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+  
+	svg.append('rect')
+    .attr("class","guess")
+    .attr("width",width)
+    .attr("height",0)
+    .style("fill","steelblue")
+
+	svg.selectAll(".uk")
+      .data(uk.features)
+    .enter().append("path")
+      .attr("class", "uk" )
+      .attr("d", path);
+  
+  svg.append('rect')
+    .attr("class","dialogue")
+    .style("stroke","red")
+    .style("fill","white")
+    .attr("height",height/10)
+    .attr("width",width/4)
+  	.attr("display","none")
+  
+  svg.append('line')
+  .attr("class","guessline")
+  .attr("x1",0)
+  .attr("x2",width)
+  .attr("y1",0)
+  .attr("y1",0)
+  .style("stroke","rgb(255,0,0)")
+	.style("stroke-width","2")
+  .style("opacity",0)
+  
+  var box = d3.select('body').append("div")
+    .attr('class', "dialoguebox" )
+		.style('position','absolute')
+		.style('width', width/4 + "px")
+		.style('height', height/10 + "px")
+  	.style("opacity",0)
+  
+};//end of ready
+  
+</script>

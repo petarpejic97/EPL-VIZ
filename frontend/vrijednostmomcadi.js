@@ -92,39 +92,36 @@ $( document ).ready(function() {
         klik = 2
         update(data2)
 });
-// set the dimensions and margins of the graph
 var margin = {top: 10, right: 30, bottom: 30, left: 100},
     width = 800 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-// append the svg object to the body of the page
 var svg = d3.select("#ukupneFinancije")
   .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom+100)
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom+100)
   .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
+var x = d3.scaleLinear()
+    .range([0,width]);
 
-// Initialise a X axis:
-var x = d3.scaleLinear().range([0,width]);
 var xAxis = d3.axisBottom()
     .scale(x)
     .ticks(20);
 
-  svg.append("g")
+svg.append("g")
     .attr("transform", "translate(0," + height + ")")
     .attr("class","myXaxis")
 
-// Initialize an Y axis
 var y = d3.scaleLinear()
     .range([height, 0]);
-var yAxis = d3.axisLeft().scale(y);
+
+var yAxis = d3.axisLeft()
+    .scale(y);
 svg.append("g")
   .attr("class","myYaxis")
 
-// Create a function that takes a dataset as input and update the plot:
 function update(data) {
   if(klik == 1){
     console.log("udem")
@@ -151,28 +148,26 @@ function update(data) {
   }
   svg.select(".xos").remove();
   svg.select(".yos").remove();
-  // Create the X axis:
+
   x.domain([0, d3.max(data, function(d) { return d.position }) ]);
   svg.selectAll(".myXaxis").transition()
     .duration(3000)
     .call(xAxis);
 
     svg.append("text")             
-      .attr("transform",
-            "translate(" + (width/2) + " ," + 
-                           (height + margin.top + 30) + ")")
+      .attr("transform","translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
       .style("text-anchor", "middle")
       .attr("class","xos")
       .text("Pozicija na tablici");
 
-  // create the Y axis
   y.domain([0, d3.max(data, function(d) { return d.ser2  }) ]);
+
   svg.selectAll(".myYaxis")
     .transition()
     .duration(3000)
     .call(yAxis)
   
-    svg.append("text")
+  svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("class","yos")
     .attr("y", 0 - margin.left)
@@ -182,11 +177,9 @@ function update(data) {
     .text("Vrijednost kluba(€)");      
 
 
-  // Create a update selection: bind to the new data
   var u = svg.selectAll(".lineTest")
     .data([data], function(d){ return d.position });
 
-  // Updata the line
   u.enter()
     .append("path")
     .attr("class","lineTest")
@@ -194,13 +187,12 @@ function update(data) {
     .transition()
     .duration(3000)
     .attr("d", d3.line()
-      .x(function(d) { return x(d.position); })
-      .y(function(d) { return y(d.ser2); }))
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 2.5)
+    .x(function(d) { return x(d.position); })
+    .y(function(d) { return y(d.ser2); }))
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 2.5)
 }
 
-// At the beginning, I run the update function on the first dataset:
 update(data1)
 });
