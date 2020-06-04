@@ -926,10 +926,8 @@ $( document ).ready(function() {
    createTable()
    createSVG()
    $(".table td:nth-child(2)").click(function() {
-      console.log("udem")
       var tableData = $(this).parent("tr").children("td").map(function() {
-          return $(this).text();
-          
+          return $(this).text();    
       }).get();
       
       setHeader(tableData)
@@ -1164,7 +1162,7 @@ function createGraph(tableData){
       .duration(800)
       .attr('y', function(d) { return y(d.attack_posession); })
       .attr('height',function(d,i) {return height - y(d.attack_posession); })
-      .delay(function(d,i){console.log(i) ; return(i*100)})
+      .delay(function(d,i){ return(i*100)})
 
    svg.append("text")
          .attr("x", (width / 2))             

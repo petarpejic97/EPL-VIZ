@@ -24,3 +24,19 @@ button{
   height: 555px;
   margin: auto;
 }
+.uk { fill: #cad9dc; }
+    
+.place,.place-label {
+  fill: #444;
+}
+
+h1, p, text {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  pointer-events: none;
+}
+  
+#karta{
+  position: absolute;
+  top:20%;
+  z-index: -1;
+}

@@ -196,3 +196,39 @@ function update(data) {
 
 update(data1)
 });
+
+d3.queue  
+        
+d3.queue()
+.defer(d3.json, "uk.geo.json")
+.await(ready);
+  
+function ready (error, uk){
+  
+    var width = 600;
+        height = 700;
+    
+    var projection = d3.geoAlbers()
+        .center([0, 55.4])
+        .rotate([4.4, 0])
+        .parallels([50, 60])
+        .scale(width * 6.4)
+        .translate([width / 2, height / 2]);
+    
+    var path = d3.geoPath()
+        .projection(projection)
+        .pointRadius(2);
+    
+    var svg = d3.select(".karta")
+        .append("svg")
+        .attr("width", width)
+        .attr("id","karta")
+        .attr("height", height);
+
+    
+        svg.selectAll(".uk")
+        .data(uk.features)
+        .enter().append("path")
+        .attr("class", "uk" )
+        .attr("d", path);
+};
