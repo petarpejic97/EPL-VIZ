@@ -925,11 +925,12 @@ var data = [
 $( document ).ready(function() {
    createTable()
    createSVG()
+   //stavljanje listenera na drugi stupac u tablici
    $(".table td:nth-child(2)").click(function() {
       var tableData = $(this).parent("tr").children("td").map(function() {
           return $(this).text();    
       }).get();
-      
+      //poziva se funkcija s podacima za klub koji je kliknut
       setHeader(tableData)
       setImage(tableData[1])
       createGraph(tableData)
@@ -938,12 +939,14 @@ $( document ).ready(function() {
 });
 
 function createTable(){
-   var tablewrapper = document.querySelector(".table-wrapper"),
+   //dohvaća se element koji je predviđen za kreiranje tablice
+   var tablewrapper = document.querySelector(".table-wrapper")
+   //kreira se element table
    tbl  = document.createElement('table');
    tbl.style.width  = '100%';
    tbl.setAttribute("class","table")
    tbl.style.border = '1px solid black';
-
+   //postavlja se što će koji podatak postavljati
    var headerPolje = ["Pozicija","Klub","Utakmice","Pobjede","Izjednačene","Porazi",
    "Gol razlika","Zabijeni golovi","Primljeni golovi","Bodovi"]
    var tr = tbl.insertRow();
@@ -952,7 +955,7 @@ function createTable(){
       var th = tr.insertCell();
       th.appendChild(document.createTextNode(headerPolje[j]));
    }
-
+   //napravljeno polje s imenima atributa koja će se iz JSON podataka prebaciti u tablicu
    var poljeStupaca=["general_league_position","Team","general_matches_played","general_won",
             "general_draw","general_lost","general_goal_difference","attack_scored",
             "defence_goals_conceeded","general_points"]
@@ -967,34 +970,41 @@ function createTable(){
 }
     
 function setHeader(tableData){
+   //postavljanje imena kluba u naslov 
    var clubName = document.createElement("h2")
    clubName.textContent= tableData[1]
 
-   clubName.setAttribute("float","left")
    clubName.setAttribute("id","clubname")
    $("#clubname").replaceWith(clubName)
+
+   //pozivanje funkcije za postavljanje brojčanog iznosa posjeda
    getPercent(clubName.textContent)
 }
 
 function getPercent(clubname){
    for(var i = 0; i<data.length;i++){
       if(data[i]["Team"] == clubname){
+         //pronađe se predano ime i poziva se funkcija za postavljanje broja
          setPercentage(data[i]["attack_posession"])
       }
    }
 }
 function setPercentage(possesion){
+   //dohvaća se element i postavlja se broj
    var percentage = document.querySelector("#possesionPercent")
    percentage.innerHTML="Posijed lopte:<strong> "+possesion+"%<strong>"
 
 }
 function setImage(image){
+   //dohvaća se element koji je predviđen za postavljanje slike kliknutog kluba
+   //postavlja se style
    var img = document.querySelector("#clubImage")
    img.setAttribute("height", "150");
    img.style.right="0"
    img.style.top="0"
    img.style.position="absolute"
    img.style.margin="15px 15px 0 0"
+   //switch funkcija koja postavlja sliku na osnovu imena 
    switch(image){
       
       case "Manchester City":{
@@ -1081,19 +1091,19 @@ function setImage(image){
    
 }
 function createSVG(){
-
+   //postavljanje dimenzija
    height = 500
-   xtransfomr =450 
    width = 700
    barWidth = width / data.length
    margin = { left: 50, top: 10, right: 50, bottom: 30 }
    
-   const getRatio = side => (margin[side] / width) * 100 + '%'
-
+   //ordinalna skala može imati domenu kao skup imena ili kategorija
    x = d3.scale.ordinal()
       .domain(d3.range(data.length))
       .rangeRoundBands([0, width], 0.1, 0.1)
-    
+
+    //linearna skala u iznosu od 0 do 100 jer je to minimalni i maximalni broj koji neka ekipa može postići
+    //range radi prilagodbu broja u prihvatljiv raspon
    y = d3.scale.linear()
       .domain([0,100])
       .range([height, 0])
@@ -1105,37 +1115,44 @@ function createSVG(){
    xAxis = d3.svg.axis()
       .scale(x)
       .orient('bottom')
+      //postavljanje imena klubova na x os
       .tickFormat(function(d, i) { return data[i]['Team']; });
 
    svg = d3.select(".clubInformation")
       .append("svg")
+      //ovaj atribut nam prilagođava element uz viewBox
       .attr('preserveAspectRatio', 'xMinYMin meet')
+      //sa viewboxom definiramo omjer slike pa smanjuje ili povećava duljine kako bi se uklopile u raspoloživ prostor
       .attr('viewBox','0 0 ' + (width + margin.left + margin.right) +' ' +(height + margin.top + margin.bottom))
       .style("overflow","visible")
       .style("margin-left","12%")
 }
 
 function createGraph(tableData){
+   //brisanje cijelog sadržaja u svgu kako bi se ponovno kreirao graf za određeni klub
    svg.selectAll("*").remove();
       var bar = svg.selectAll('g')
          .data(data)
+         //enter vraća spremnike za elemenete koji će se tek napraviti(g)
          .enter()
+         //g element koristimo za grupiranje cijelu grupu oblika kao da je jedan
          .append('g')
+         //raspoređivanje elemenata po x osi
          .attr('transform', (_, i) => 'translate(' + i * barWidth + ', 0)')
 
+   //postavljanje x osi u svg
    svg.append('g')
       .data(data)
       .attr('class', 'x axis')
       .call(xAxis)
       .attr('transform', 'translate(0,' + (height-100) + ')')
       .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", "5.15em")
-      .style("transform", "rotate(-65)");
 
+   //postavljanje y osi u svg
    svg.append('g')
          .attr('class', 'y axis')
          .call(yAxis)
+         //naslov y osi
          .append("text")
          .attr("dx", "-10em")
          .attr("dy", "-3em")
@@ -1144,11 +1161,14 @@ function createGraph(tableData){
          .style("transform","rotate(270deg)")
          .text("Postotak");
 
+   //proširivanje svga s rect elementima
    bar.append('rect')
       .attr('class', 'bar')
+      //stanjivanje stupaca da bi bilo ljepse
       .attr('width', barWidth - 10)
       .attr('y', function(d) { return y(0); })
       .attr('height',function(d,i) {return height - y(0); })
+      //odabranom klubu stavlja se drugčija boja
       .attr("fill",  function(d,i) {
          if(tableData[1] == d.Team){
             return "rgb(89, 206, 128)" 
@@ -1162,8 +1182,10 @@ function createGraph(tableData){
       .duration(800)
       .attr('y', function(d) { return y(d.attack_posession); })
       .attr('height',function(d,i) {return height - y(d.attack_posession); })
+      //svaki stupac krece nakon 100ms
       .delay(function(d,i){ return(i*100)})
 
+      //postavljanje naslova grafa
    svg.append("text")
          .attr("x", (width / 2))             
          .attr("y", - 100)
