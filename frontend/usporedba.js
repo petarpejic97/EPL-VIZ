@@ -922,139 +922,144 @@ var data = [
       "attack_posession":47.1,
       "attack_pass_accuracy":75.8
    }]
-   var maxValues={
-      golovi:95,
-      dodavanja:26581,
-      lopteuprostor:146,
-      ubacivanjau16:814,
-      korneri:298,
-      sutevi:683,
-      suteviuokvir:260,
-      goloviunutar16:84
-   }
-   var sumGolovi = 0;
-   var sumDodavanja = 0
-   var sumLopteUProstor=0
-   var sumUbacivanjaU16 =0
-   var sumKorneri =0;
-   var sumSutevi = 0;
-   var sumSuteviUOkvir =0
-   var sumGoloviUnutar16 =0
+//pregledom podataka nađene su maksimalne vrijednosti napadačkih segmenata koji će se uspoređicati
+var maxValues={
+   golovi:95,
+   dodavanja:26581,
+   lopteuprostor:146,
+   ubacivanjau16:814,
+   korneri:298,
+   sutevi:683,
+   suteviuokvir:260,
+   goloviunutar16:84
+}
+var sumGolovi = 0;
+var sumDodavanja = 0
+var sumLopteUProstor=0
+var sumUbacivanjaU16 =0
+var sumKorneri =0;
+var sumSutevi = 0;
+var sumSuteviUOkvir =0
+var sumGoloviUnutar16 =0
 
-   for(let i = 0; i<20; i++){
-      sumGolovi += data[i].attack_scored
-      sumDodavanja += data[i].attack_passes
-      sumLopteUProstor += data[i].attack_passes_through
-      sumUbacivanjaU16 += data[i].attack_crosses
-      sumKorneri += data[i].attack_corners_taken
-      sumSutevi += data[i].attack_shots
-      sumSuteviUOkvir += data[i].attack_shots_on_target
-      sumGoloviUnutar16 += data[i].attack_goals_box
-   }
-   var prosjek = [];
-   prosjek.push({axis: "Golovi", value:sumGolovi/20/maxValues.golovi});
-   prosjek.push({axis: "Dodavanja", value:sumDodavanja/20/maxValues.dodavanja});
-   prosjek.push({axis: "Lopte u prostor", value:sumLopteUProstor/20/maxValues.lopteuprostor});
-   prosjek.push({axis: "Ubacivanja u 16", value:sumUbacivanjaU16/20/maxValues.ubacivanjau16});
-   prosjek.push({axis: "Korneri", value:sumKorneri/20/maxValues.korneri});
-   prosjek.push({axis: "Šutevi", value:sumSutevi/20/maxValues.sutevi});
-   prosjek.push({axis: "Šutevi u okvir", value:sumSuteviUOkvir/20/maxValues.suteviuokvir});
-   prosjek.push({axis: "Golovi unutar 16", value:sumGoloviUnutar16/20/maxValues.goloviunutar16});
-  var colorscale = d3.scale.category10();
-  //Data
- for(let i=0; i<20; i++){
-   window['klub'+i] = [];
-   window['klub'+i].push(prosjek)
+//radi se suma ukupnih vrijednosti segmenata 
+for(let i = 0; i<20; i++){
+   sumGolovi += data[i].attack_scored
+   sumDodavanja += data[i].attack_passes
+   sumLopteUProstor += data[i].attack_passes_through
+   sumUbacivanjaU16 += data[i].attack_crosses
+   sumKorneri += data[i].attack_corners_taken
+   sumSutevi += data[i].attack_shots
+   sumSuteviUOkvir += data[i].attack_shots_on_target
+   sumGoloviUnutar16 += data[i].attack_goals_box
+}
+//napravljeno polje prosjek koje punimo podacima s prosječnim vrijednostima svakog segmenta
+//sumu se dijeli s projem klubova i nakon toga s maksimalnim brojem iz tog seglenta kako bi se dobio
+//postotak u odnosu na najveci broj 
+var prosjek = [];
+prosjek.push({axis: "Golovi", value:sumGolovi/20/maxValues.golovi});
+prosjek.push({axis: "Dodavanja", value:sumDodavanja/20/maxValues.dodavanja});
+prosjek.push({axis: "Lopte u prostor", value:sumLopteUProstor/20/maxValues.lopteuprostor});
+prosjek.push({axis: "Ubacivanja u 16", value:sumUbacivanjaU16/20/maxValues.ubacivanjau16});
+prosjek.push({axis: "Korneri", value:sumKorneri/20/maxValues.korneri});
+prosjek.push({axis: "Šutevi", value:sumSutevi/20/maxValues.sutevi});
+prosjek.push({axis: "Šutevi u okvir", value:sumSuteviUOkvir/20/maxValues.suteviuokvir});
+prosjek.push({axis: "Golovi unutar 16", value:sumGoloviUnutar16/20/maxValues.goloviunutar16});
+var colorscale = d3.scale.category10();
+//radi se globalno polje s dva polja, jedno je prosjek,a drugo je klub
+for(let i=0; i<20; i++){
+//postavljanje imena polja i dodavanje prosjeka kao prvog polja u njemu
+window['klub'+i] = [];
+window['klub'+i].push(prosjek)
+//inicijalizacija polja koje punimo podacima kluba
+//dijeli se iznos koji je klub postigao u određenom segmentu i s maksimalnim brojem u tom segmentu za ligu
+let tempArray = [];
+tempArray.push({axis: "Golovi", value:data[i].attack_scored/maxValues.golovi});
+tempArray.push({axis: "Dodavanja", value:data[i].attack_passes/maxValues.dodavanja});
+tempArray.push({axis: "Lopte u prostor", value:data[i].attack_passes_through/maxValues.lopteuprostor});
+tempArray.push({axis: "Ubacivanja u 16", value:data[i].attack_crosses/maxValues.ubacivanjau16});
+tempArray.push({axis: "Korneri", value:data[i].attack_corners_taken/maxValues.korneri});
+tempArray.push({axis: "Šutevi", value:data[i].attack_shots/maxValues.sutevi});
+tempArray.push({axis: "Šutevi u okvir", value:data[i].attack_shots_on_target/maxValues.suteviuokvir});
+tempArray.push({axis: "Golovi unutar 16", value:data[i].attack_goals_box/maxValues.goloviunutar16});
+window['klub'+i].push(tempArray)
+}
+//najvece vrijednosti za defanzivne segmente u ligi
+var defMaxValues={
+   primljenigolovi:81,
+   zutikartoni:77,
+   crvenikartoni:5,
+   obrane:148,
+   defanzivniblokovi:222,
+   presječenelopte:528,
+   uklizavanja:730,
+   izbijenelopte:1120
+}
+var sumPrimljeniGolovi = 0;
+var sumZutiKartoni = 0
+var sumCrveniKartoni=0
+var sumObrane =0
+var sumDefanzivniBlokovi =0;
+var sumPresjeceneLopte = 0;
+var sumUklizavanja =0
+var sumIzbijeneLopte =0
+
+for(let i = 0; i<20; i++){
+   sumPrimljeniGolovi += data[i].defence_goals_conceeded
+   sumZutiKartoni += data[i].general_card_yellow
+   sumCrveniKartoni += data[i].general_card_red
+   sumObrane += data[i].defence_saves
+   sumDefanzivniBlokovi += data[i].defence_blocks
+   sumPresjeceneLopte += data[i].defence_interceptions
+   sumUklizavanja += data[i].defence_tackles
+   sumIzbijeneLopte += data[i].defence_clearances
+}
+var defprosjek = [];
+defprosjek.push({axis: "Primljeni golovi", value:sumPrimljeniGolovi/20/defMaxValues.primljenigolovi});
+defprosjek.push({axis: "Žuti kartoni", value:sumZutiKartoni/20/defMaxValues.zutikartoni});
+defprosjek.push({axis: "Crveni kartoni", value:sumCrveniKartoni/20/defMaxValues.crvenikartoni});
+defprosjek.push({axis: "Obrane", value:sumObrane/20/defMaxValues.obrane});
+defprosjek.push({axis: "Defanzivni blokovi", value:sumDefanzivniBlokovi/20/defMaxValues.defanzivniblokovi});
+defprosjek.push({axis: "Presječene lopte", value:sumPresjeceneLopte/20/defMaxValues.presječenelopte});
+defprosjek.push({axis: "Uklizavanja", value:sumUklizavanja/20/defMaxValues.uklizavanja});
+defprosjek.push({axis: "Izbijene lopte", value:sumIzbijeneLopte/20/defMaxValues.izbijenelopte});
+for(let i=0; i<20; i++){
+   window['defklub'+i] = [];
+   window['defklub'+i].push(defprosjek)
    let tempArray = [];
-   tempArray.push({axis: "Golovi", value:data[i].attack_scored/maxValues.golovi});
-   tempArray.push({axis: "Dodavanja", value:data[i].attack_passes/maxValues.dodavanja});
-   tempArray.push({axis: "Lopte u prostor", value:data[i].attack_passes_through/maxValues.lopteuprostor});
-   tempArray.push({axis: "Ubacivanja u 16", value:data[i].attack_crosses/maxValues.ubacivanjau16});
-   tempArray.push({axis: "Korneri", value:data[i].attack_corners_taken/maxValues.korneri});
-   tempArray.push({axis: "Šutevi", value:data[i].attack_shots/maxValues.sutevi});
-   tempArray.push({axis: "Šutevi u okvir", value:data[i].attack_shots_on_target/maxValues.suteviuokvir});
-   tempArray.push({axis: "Golovi unutar 16", value:data[i].attack_goals_box/maxValues.goloviunutar16});
-   window['klub'+i].push(tempArray)
- }
-   //defanzivno
-   //1-value zato sto kubove s malim brojem primljenih golova treba siroko
-   //prikazati na grafu
-   var defMaxValues={
-      primljenigolovi:81,
-      zutikartoni:77,
-      crvenikartoni:5,
-      obrane:148,
-      defanzivniblokovi:222,
-      presječenelopte:528,
-      uklizavanja:730,
-      izbijenelopte:1120
+   tempArray.push({axis: "Primljeni golovi", value:data[i].defence_goals_conceeded/defMaxValues.primljenigolovi});
+   tempArray.push({axis: "Žuti kartoni", value:data[i].general_card_yellow/defMaxValues.zutikartoni});
+   tempArray.push({axis: "Crveni kartoni", value:data[i].general_card_red/defMaxValues.crvenikartoni});
+   tempArray.push({axis: "Obrane", value:data[i].defence_saves/defMaxValues.obrane});
+   tempArray.push({axis: "Defanzivni blokovi", value:data[i].defence_blocks/defMaxValues.defanzivniblokovi});
+   tempArray.push({axis: "Presječene lopte", value:data[i].defence_interceptions/defMaxValues.presječenelopte});
+   tempArray.push({axis: "Uklizavanja", value:data[i].defence_tackles/defMaxValues.uklizavanja});
+   tempArray.push({axis: "Izbijene lopte", value:data[i].defence_clearances/defMaxValues.izbijenelopte});
+   window['defklub'+i].push(tempArray)
    }
-   var sumPrimljeniGolovi = 0;
-   var sumZutiKartoni = 0
-   var sumCrveniKartoni=0
-   var sumObrane =0
-   var sumDefanzivniBlokovi =0;
-   var sumPresjeceneLopte = 0;
-   var sumUklizavanja =0
-   var sumIzbijeneLopte =0
+//postavke za radar chart,ostale su defoulne
+var mycfg = {
+   w: w,
+   h: h,
+   maxValue: 1,
+   levels: 8,
+   ExtraWidthX: 300
+}
 
-   for(let i = 0; i<20; i++){
-      sumPrimljeniGolovi += data[i].defence_goals_conceeded
-      sumZutiKartoni += data[i].general_card_yellow
-      sumCrveniKartoni += data[i].general_card_red
-      sumObrane += data[i].defence_saves
-      sumDefanzivniBlokovi += data[i].defence_blocks
-      sumPresjeceneLopte += data[i].defence_interceptions
-      sumUklizavanja += data[i].defence_tackles
-      sumIzbijeneLopte += data[i].defence_clearances
-   }
-   var defprosjek = [];
-   defprosjek.push({axis: "Primljeni golovi", value:sumPrimljeniGolovi/20/defMaxValues.primljenigolovi});
-   defprosjek.push({axis: "Žuti kartoni", value:sumZutiKartoni/20/defMaxValues.zutikartoni});
-   defprosjek.push({axis: "Crveni kartoni", value:sumCrveniKartoni/20/defMaxValues.crvenikartoni});
-   defprosjek.push({axis: "Obrane", value:sumObrane/20/defMaxValues.obrane});
-   defprosjek.push({axis: "Defanzivni blokovi", value:sumDefanzivniBlokovi/20/defMaxValues.defanzivniblokovi});
-   defprosjek.push({axis: "Presječene lopte", value:sumPresjeceneLopte/20/defMaxValues.presječenelopte});
-   defprosjek.push({axis: "Uklizavanja", value:sumUklizavanja/20/defMaxValues.uklizavanja});
-   defprosjek.push({axis: "Izbijene lopte", value:sumIzbijeneLopte/20/defMaxValues.izbijenelopte});
-   for(let i=0; i<20; i++){
-      window['defklub'+i] = [];
-      window['defklub'+i].push(defprosjek)
-      let tempArray = [];
-      tempArray.push({axis: "Primljeni golovi", value:data[i].defence_goals_conceeded/defMaxValues.primljenigolovi});
-      tempArray.push({axis: "Žuti kartoni", value:data[i].general_card_yellow/defMaxValues.zutikartoni});
-      tempArray.push({axis: "Crveni kartoni", value:data[i].general_card_red/defMaxValues.crvenikartoni});
-      tempArray.push({axis: "Obrane", value:data[i].defence_saves/defMaxValues.obrane});
-      tempArray.push({axis: "Defanzivni blokovi", value:data[i].defence_blocks/defMaxValues.defanzivniblokovi});
-      tempArray.push({axis: "Presječene lopte", value:data[i].defence_interceptions/defMaxValues.presječenelopte});
-      tempArray.push({axis: "Uklizavanja", value:data[i].defence_tackles/defMaxValues.uklizavanja});
-      tempArray.push({axis: "Izbijene lopte", value:data[i].defence_clearances/defMaxValues.izbijenelopte});
-      window['defklub'+i].push(tempArray)
-    }
-  //Options for the Radar chart, other than default
-  var mycfg = {
-    w: w,
-    h: h,
-    maxValue: 0.6,
-    levels: 6,
-    ExtraWidthX: 300
-  }
-  
-  //Call function to draw the Radar chart
-  //Will expect that data is in %'s
-  //Legend titles
-  setGraph("first","Manchester City")
-  setGraph("second","Manchester City")
-   $('#clubFirst').on('change', function() {
-      setGraph("first",this.value)
-   });
-   
-   $('#clubSecond').on('change', function() {
-      setGraph("second",this.value)
-   });
- 
+//defoultno se postavlja man city kada se otvori page
+setGraph("first","Manchester City")
+setGraph("second","Manchester City")
+$('#clubFirst').on('change', function() {
+   setGraph("first",this.value)
+});
+
+$('#clubSecond').on('change', function() {
+   setGraph("second",this.value)
+});
+ //svakim novim odabirom iz padajućeg izbornika poziva se funkcija setGraph
+ //u odnosu na kliknutu vrijednost radi poziva funkciju draw iz radarCharta
+ // kojoj se predaje dva polja koja se nalaze u varijabli klub i postavke radarcharta
 function setGraph(graphContainer,graphData){
-
    switch(graphData){
       case "Manchester City" : {
          if(graphContainer == "first"){
@@ -1281,13 +1286,10 @@ function setGraph(graphContainer,graphData){
    }
    
 }
-  ////////////////////////////////////////////
-  /////////// Initiate legend ////////////////
-  ////////////////////////////////////////////
+//izrada svg legende koja nam pokazuje boju prosjeka i kluba
   function createLegend(){
-   var legends = d3.selectAll("#svglegend").remove()
-
-   console.log("LEGEND")
+   //najprije se obriše legenda i ponoo se napravi kako se ne došlo do preklapanja
+   d3.selectAll("#svglegend").remove()
    var LegendOptions = ['Prosjek','Klub'];
    var svg = d3.selectAll('#chartbody')
    .selectAll('svg')
@@ -1296,17 +1298,15 @@ function setGraph(graphContainer,graphData){
    .attr("width", w+300)
    .attr("height", h)
 
-//Create the title for the legend
-
-       
-//Initiate Legend	
+//inicijalizacija i postavljanje legende
 var legend = svg.append("g")
    .attr("class", "legend")
    .attr("height", 100)
    .attr("width", 200)
    .attr('transform', 'translate(90,20)');
-   //Create colour squares
-   legend.selectAll('rect')
+
+//kvadratići uz legendu
+legend.selectAll('rect')
      .data(LegendOptions)
      .enter()
      .append("rect")
@@ -1315,8 +1315,9 @@ var legend = svg.append("g")
      .attr("width", 10)
      .attr("height", 10)
      .style("fill", function(d, i){ return colorscale(i);});
-   //Create text next to squares
-   legend.selectAll('text')
+
+//text pokraj kvadratića
+legend.selectAll('text')
      .data(LegendOptions)
      .enter()
      .append("text")
