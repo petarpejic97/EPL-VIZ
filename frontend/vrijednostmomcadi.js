@@ -920,16 +920,21 @@ var data = [
      "attack_pass_accuracy":75.8
   }]
   var data1 = [];
+  //radi se polje koje drži poziciju kluba i njegovu ukupnu vrijednost momčadi
   for(let i = 0; i<20; i++){
       data1.push({position: data[i].general_league_position, value: data[i]["finance_team_market"]});
   }
   var data2 = [];
+    //radi se polje koje drži poziciju kluba i njegovu prosječnu vrijednost momčadi
   for(let i = 0; i<20; i++){
       data2.push({position: data[i].general_league_position, value: data[i]["finance_market_average"]});
   }
+  //globalna varijabla koja identificira graf koji se treba prikazati
 var klik=1;
+
 $( document ).ready(function() {
-  
+
+   //u odnosu na button koji se pritisne poziva se funkcija update s predanim poljem
     $( "#button1").click(function() {
         klik = 1;
         update(data1)
@@ -971,8 +976,9 @@ svg.append("g")
   .attr("class","myYaxis")
 
 function update(data) {
+   //klikom provjeravamo koji je button pritisnut
   if(klik == 1){
-    console.log("udem")
+     //najprije se briše naslov grafa pa se potom zamjenjuje s drugim
     svg.select(".title").remove()
     svg.append("text")
           .attr("class","title")
@@ -994,22 +1000,26 @@ function update(data) {
           .style("text-decoration", "underline")  
           .text("Prosječna vrijednost momčadi");
   }
+  //svakim pozivom mora se brisati naslov x i y osi kako ne bi došlo do preklapanja
   svg.select(".xos").remove();
   svg.select(".yos").remove();
 
+  //postavljanje pozicija na x os
   x.domain([0, d3.max(data, function(d) { return d.position }) ]);
 
+//postavljanje x os i animacije koja traje 3 sec
   svg.selectAll(".myXaxis")
     .transition()
     .duration(3000)
     .call(xAxis);
 
-    svg.append("text")             
+   //postavljanje imena x osi
+   svg.append("text")             
       .attr("transform","translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
       .style("text-anchor", "middle")
       .attr("class","xos")
       .text("Pozicija na tablici");
-
+//postavlnje vrijednosi na y os
   y.domain([0, d3.max(data, function(d) { return d.value  }) ]);
 
   svg.selectAll(".myYaxis")
@@ -1017,6 +1027,7 @@ function update(data) {
     .duration(3000)
     .call(yAxis)
   
+    //ime y osi
   svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("class","yos")
@@ -1026,10 +1037,10 @@ function update(data) {
     .style("text-anchor", "middle")
     .text("Vrijednost kluba(€)");      
 
-
+  //postavljaju se predani podaci na graf
   var u = svg.selectAll(".lineTest")
-    .data([data], function(d){ return d.position });
-
+    .data([data]);
+  //izrada linijskog grada sa svim potrebnim atributima
   u.enter()
     .append("path")
     .attr("class","lineTest")
@@ -1047,8 +1058,8 @@ function update(data) {
 update(data1)
 });
 
-d3.queue  
-        
+//izrada karte UK
+//povkačenje 
 d3.queue()
 .defer(d3.json, "uk.geo.json")
 .await(ready);
@@ -1057,7 +1068,7 @@ function ready (error, uk){
   
     var width = 600;
         height = 700;
-    
+    //definira se vrsta projektcije 
     var projection = d3.geoAlbers()
         .center([0, 55.4])
         .rotate([4.4, 0])
@@ -1065,18 +1076,20 @@ function ready (error, uk){
         .scale(width * 6.4)
         .translate([width / 2, height / 2]);
     
+        //definiranje generatora krivulj
     var path = d3.geoPath()
         .projection(projection)
         .pointRadius(2);
     
+        //dodaje se svg na predviđeno mjesto
     var svg = d3.select(".karta")
         .append("svg")
         .attr("width", width)
         .attr("id","karta")
         .attr("height", height);
 
-    
-        svg.selectAll(".uk")
+    //učitavanje json podataka o Uku
+      svg.selectAll(".uk")
         .data(uk.features)
         .enter()
         .append("path")
