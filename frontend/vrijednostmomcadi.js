@@ -931,7 +931,7 @@ var data = [
   }
   //globalna varijabla koja identificira graf koji se treba prikazati
 var klik=1;
-
+var firstUpdate=true;
 $( document ).ready(function() {
 
    //u odnosu na button koji se pritisne poziva se funkcija update s predanim poljem
@@ -943,119 +943,141 @@ $( document ).ready(function() {
       $( "#button2").click(function() {
         klik = 2
         update(data2)
-});
-var margin = {top: 10, right: 30, bottom: 30, left: 100},
+      });
+      var margin = {top: 10, right: 30, bottom: 30, left: 100},
     width = 800 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
-
-var svg = d3.select("#ukupneFinancije")
-  .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom+100)
-  .append("g")
-  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-
-var x = d3.scaleLinear()
-    .range([0,width]);
-
-var xAxis = d3.axisBottom()
+  
+    
+   var svg = d3.select("#ukupneFinancije")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+  
+  var x = d3.scaleBand()
+    .range([ 0, width ])
+    .domain(data1.map(function(d) { return d.position; }))
+    .padding(0.2);
+   
+   var xAxis = d3.axisBottom()
     .scale(x)
     .ticks(20);
 
-svg.append("g")
+  svg.append("g")
     .attr("transform", "translate(0," + height + ")")
-    .attr("class","myXaxis")
+    .call(d3.axisBottom(x))
+  
+    
+  var y = d3.scaleLinear()
+    .domain([0, d3.max(data1, function(d) { return d.value; })])
+    .range([ height, 0]);
 
-var y = d3.scaleLinear()
-    .range([height, 0]);
-
-var yAxis = d3.axisLeft()
+    var yAxis = d3.axisLeft()
     .scale(y);
 
-svg.append("g")
-  .attr("class","myYaxis")
-
-function update(data) {
-   //klikom provjeravamo koji je button pritisnut
-  if(klik == 1){
-     //najprije se briše naslov grafa pa se potom zamjenjuje s drugim
-    svg.select(".title").remove()
-    svg.append("text")
-          .attr("class","title")
-          .attr("x", (width / 2))             
-          .attr("y", 5 )
-          .attr("text-anchor", "middle")  
-          .style("font-size", "16px") 
-          .style("text-decoration", "underline")  
-          .text("Ukupna vrijednost momčadi");
-  }
-  else{
-    svg.select(".title").remove()
-    svg.append("text")
-    .attr("class","title")
-          .attr("x", (width / 2))             
-          .attr("y", 5)
-          .attr("text-anchor", "middle")  
-          .style("font-size", "16px") 
-          .style("text-decoration", "underline")  
-          .text("Prosječna vrijednost momčadi");
-  }
-  //svakim pozivom mora se brisati naslov x i y osi kako ne bi došlo do preklapanja
-  svg.select(".xos").remove();
-  svg.select(".yos").remove();
-
-  //postavljanje pozicija na x os
-  x.domain([0, d3.max(data, function(d) { return d.position }) ]);
-
-//postavljanje x os i animacije koja traje 3 sec
-  svg.selectAll(".myXaxis")
-    .transition()
-    .duration(3000)
-    .call(xAxis);
-
-   //postavljanje imena x osi
-   svg.append("text")             
-      .attr("transform","translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
-      .style("text-anchor", "middle")
-      .attr("class","xos")
-      .text("Pozicija na tablici");
-//postavlnje vrijednosi na y os
-  y.domain([0, d3.max(data, function(d) { return d.value  }) ]);
-
-  svg.selectAll(".myYaxis")
-    .transition()
-    .duration(3000)
-    .call(yAxis)
+  svg.append("g")
+    .attr("class", "myYaxis")
+    .call(d3.axisLeft(y));
   
-    //ime y osi
+  function update(data) {
+     console.log(data)
+      //klikom provjeravamo koji je button pritisnut
+  if(klik == 1){
+   //najprije se briše naslov grafa pa se potom zamjenjuje s drugim
+  svg.select(".title").remove()
   svg.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("class","yos")
-    .attr("y", 0 - margin.left)
-    .attr("x",0 - (height / 2))
-    .attr("dy", "1em")
-    .style("text-anchor", "middle")
-    .text("Vrijednost kluba(€)");      
-
-  //postavljaju se predani podaci na graf
-  var u = svg.selectAll(".lineTest")
-    .data([data]);
-  //izrada linijskog grada sa svim potrebnim atributima
-  u.enter()
-    .append("path")
-    .attr("class","lineTest")
-    .merge(u)
-    .transition()
-    .duration(3000)
-    .attr("d", d3.line()
-    .x(function(d) { return x(d.position); })
-    .y(function(d) { return y(d.value); }))
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 2.5)
+        .attr("class","title")
+        .attr("x", (width / 2))             
+        .attr("y", 5 )
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Ukupna vrijednost momčadi");
 }
+else{
+  svg.select(".title").remove()
+  svg.append("text")
+  .attr("class","title")
+        .attr("x", (width / 2))             
+        .attr("y", 5)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Prosječna vrijednost momčadi");
+}
+//svakim pozivom mora se brisati naslov x i y osi kako ne bi došlo do preklapanja
+   svg.select(".xos").remove();
+   svg.select(".yos").remove();
 
-update(data1)
+   //postavljanje domene na x i y os
+   x.domain(data.map(function(d) { return d.position; }));
+   y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+   svg.selectAll(".myXaxis")
+   .transition()
+   .duration(3000)
+   .call(xAxis);
+
+  //postavljanje imena x osi
+  svg.append("text")             
+     .attr("transform","translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+     .style("text-anchor", "middle")
+     .attr("class","xos")
+     .text("Pozicija na tablici");
+
+   svg.selectAll(".myYaxis")
+   .transition()
+   .duration(3000)
+   .call(yAxis)
+
+  svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("class","yos")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Vrijednost kluba(€)");      
+
+//ulaskom u if sprječava se širenje grafa od točke (0,0) te se graf siri od dolje prema gore, od mjesta y=0
+if(firstUpdate==true){
+   firstUpdate=false
+   var u = svg.selectAll("rect")
+   .data(data)
+
+   u.enter()
+      .append("rect")
+      .merge(u)
+      .attr("x", function(d) { return x(d.position); })
+      .attr("y", function(d) { return y(0); })
+      .transition()
+      .duration(2000)
+      .attr("x", function(d) { return x(d.position); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.value); })
+      .attr("fill", "rgb(89, 206, 128)")
+}
+else{
+   var u = svg.selectAll("rect")
+      .data(data)
+  //izrada stupcasstog grafa sa svim potrebnim atributima
+   u.enter()
+      .append("rect")
+      .merge(u)
+      .transition()
+      .duration(2000)
+      .attr("x", function(d) { return x(d.position); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.value); })
+      .attr("fill", "rgb(89, 206, 128)")
+   }
+    
+  }
+  update(data1)
 });
 
 //izrada karte UK

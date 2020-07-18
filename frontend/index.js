@@ -1,4 +1,4 @@
-var svg, xAxis, yAxis,height;
+var svg, xAxis, yAxis,height,firstclick=true;
 var barchart, x, y, barWidth;
 var choosenClub;
 var data = [
@@ -19,7 +19,7 @@ var data = [
        "general_squad_size":25,
        "general_squad_average_age":27.1,
        "general_squad_foreigners":20,
-       "finance _team_market":1003200000,
+       "finance_team_market":1003200000,
        "finance _market_average":39987200,
        "attack_passes":26.581,
        "attack_passes_through":112,
@@ -927,6 +927,7 @@ $( document ).ready(function() {
    createSVG()
    //stavljanje listenera na drugi stupac u tablici
    $(".table td:nth-child(2)").click(function() {
+      
       var tableData = $(this).parent("tr").children("td").map(function() {
           return $(this).text();    
       }).get();
@@ -951,7 +952,6 @@ function createTable(){
    "Gol razlika","Zabijeni golovi","Primljeni golovi","Bodovi"]
    var tr = tbl.insertRow();
    for(var j = 0; j < 10; j++){
-      
       var th = tr.insertCell();
       th.appendChild(document.createTextNode(headerPolje[j]));
    }
@@ -1100,7 +1100,7 @@ function createSVG(){
    //ordinalna skala može imati domenu kao skup imena ili kategorija
    x = d3.scale.ordinal()
       .domain(d3.range(data.length))
-      .rangeRoundBands([0, width], 0.1, 0.1)
+      .rangeRoundBands([0, width])
 
     //linearna skala u iznosu od 0 do 100 jer je to minimalni i maximalni broj koji neka ekipa može postići
     //range radi prilagodbu broja u prihvatljiv raspon
@@ -1129,6 +1129,7 @@ function createSVG(){
 }
 
 function createGraph(tableData){
+   
    //brisanje cijelog sadržaja u svgu kako bi se ponovno kreirao graf za određeni klub
    svg.selectAll("*").remove();
       var bar = svg.selectAll('g')
@@ -1142,11 +1143,9 @@ function createGraph(tableData){
 
    //postavljanje x osi u svg
    svg.append('g')
-      .data(data)
       .attr('class', 'x axis')
       .call(xAxis)
       .attr('transform', 'translate(0,' + (height-100) + ')')
-      .style("text-anchor", "end")
 
    //postavljanje y osi u svg
    svg.append('g')
@@ -1160,7 +1159,8 @@ function createGraph(tableData){
          .style("font-size","larger")
          .style("transform","rotate(270deg)")
          .text("Postotak");
-
+  
+   
    //proširivanje svga s rect elementima
    bar.append('rect')
       .attr('class', 'bar')
@@ -1176,14 +1176,31 @@ function createGraph(tableData){
          else
             return "#bd007e"
          })
+         .on('mouseover', mouseover)
+         .on('mousemove', function(d,i) {
+            tooltip.html(data[i]["Team"] +'<br>' + data[i]["attack_posession"])
+            .style('left', (d3.event.pageX - 34) + 'px')
+            .style('top', (d3.event.pageY - 12) + 'px');
+         })
+         .on('mouseout', mouseout);
 
-   svg.selectAll("rect")
+   
+   if(firstclick == true){
+      firstclick=false
+      svg.selectAll("rect")
       .transition()
       .duration(800)
       .attr('y', function(d) { return y(d.attack_posession); })
       .attr('height',function(d,i) {return height - y(d.attack_posession); })
       //svaki stupac krece nakon 100ms
       .delay(function(d,i){ return(i*100)})
+   }
+   else{
+      svg.selectAll("rect")
+      .attr('y', function(d) { return y(d.attack_posession); })
+      .attr('height',function(d,i) {return height - y(d.attack_posession); })
+   }
+   
 
       //postavljanje naslova grafa
    svg.append("text")
@@ -1193,4 +1210,13 @@ function createGraph(tableData){
          .style("font-size", "20px") 
          .style("text-decoration", "underline")  
          .text("Posijed lopte u sezoni 2018/2019");
+}
+var tooltip = d3.select('.container-fluid').append('div')
+         .attr('class', 'tooltip')
+         .style('display', 'none');
+function mouseover(){
+   tooltip.style('display', 'inline');
+}
+function mouseout(){
+   tooltip.style('display', 'none');
 }

@@ -21,8 +21,10 @@ button{
     margin: 5px;
 }
 #ukupneFinancije{
-  height: 555px;
   margin: auto;
+}
+#ukupneFinancije > svg{
+  height: 550px;
 }
 .uk { fill: #cad9dc; }
 
